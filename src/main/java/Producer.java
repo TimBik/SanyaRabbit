@@ -16,36 +16,38 @@ public class Producer {
     private final static String EXCHANGE_NAME = "pdf";
     // тип FANOUT
     private final static String EXCHANGE_TYPE = "fanout";
+
     public static void main(String[] args) {
         ConnectionFactory connectionFactory = new ConnectionFactory();
         connectionFactory.setHost("localhost");
-
         Scanner sc = new Scanner(System.in);
-        System.out.println("Введите имя");
-        String name = sc.nextLine();
-        System.out.println("Ввыедите фамилию");
-        String surname = sc.nextLine();
-        System.out.println("Введите номер паспорта");
-        String number = sc.nextLine();
-        System.out.println("Введите возраст");
-        String age = sc.nextLine();
-        System.out.println("Введите дату выдачи");
-        String data = sc.nextLine();
 
-        User user = new User(name,surname,number,Integer.parseInt(age), data);
-        try {
-            Connection connection = connectionFactory.newConnection();
-            Channel channel = connection.createChannel();
-            // создаем exchange
-            channel.exchangeDeclare(EXCHANGE_NAME, EXCHANGE_TYPE);
-            ObjectMapper mapper = new ObjectMapper();
-            String jsonObject = mapper.writeValueAsString(user);
-            //считывание с клавиатуры создание юзера юзера превращаем в json
-            // считываем файл URL
-            channel.basicPublish(EXCHANGE_NAME, "",null, jsonObject.getBytes());
-        } catch (IOException | TimeoutException e) {
-            throw new IllegalArgumentException(e);
+        while (true) {
+            System.out.println("Введите имя");
+            String name = sc.nextLine();
+            System.out.println("Ввыедите фамилию");
+            String surname = sc.nextLine();
+            System.out.println("Введите номер паспорта");
+            String number = sc.nextLine();
+            System.out.println("Введите возраст");
+            String age = sc.nextLine();
+            System.out.println("Введите дату выдачи");
+            String data = sc.nextLine();
+
+            User user = new User(name, surname, number, Integer.parseInt(age), data);
+            try {
+                Connection connection = connectionFactory.newConnection();
+                Channel channel = connection.createChannel();
+                // создаем exchange
+                channel.exchangeDeclare(EXCHANGE_NAME, EXCHANGE_TYPE);
+                ObjectMapper mapper = new ObjectMapper();
+                String jsonObject = mapper.writeValueAsString(user);
+                //считывание с клавиатуры создание юзера юзера превращаем в json
+                // считываем файл URL
+                channel.basicPublish(EXCHANGE_NAME, "", null, jsonObject.getBytes());
+            } catch (IOException | TimeoutException e) {
+                throw new IllegalArgumentException(e);
+            }
         }
-
     }
 }
